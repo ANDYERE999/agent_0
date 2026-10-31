@@ -1,0 +1,23 @@
+default_provider: openai_responses
+
+providers:
+  openai_compatible:
+    model: ""
+    base_url: ""
+    api_key_env: OPENAI_API_KEY
+    stream_include_usage: false
+  openai_responses:
+    model: ""
+    base_url: ""
+    api_key_env: OPENAI_API_KEY
+  anthropic_messages:
+    model: ""
+    api_key_env: ANTHROPIC_API_KEY
+
+request_timeout_seconds: 300
+max_output_tokens: 4096
+
+retry:
+  max_retries: 10
+  backoff_base_seconds: 1
+  backoff_max_seconds: 60
