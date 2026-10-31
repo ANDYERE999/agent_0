@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +15,7 @@ class ConfigError(ValueError):
 class ModelSettings:
     provider: str
     model: str
-    api_key_env: str
+    api_key: str = field(repr=False)
     base_url: str | None
     request_timeout_seconds: float
     max_retries: int
@@ -24,17 +23,6 @@ class ModelSettings:
     retry_backoff_max_seconds: float
     max_output_tokens: int
     stream_include_usage: bool
-
-    @property
-    def api_key(self) -> str:
-        if not self.api_key_env:
-            return ""
-        value = os.getenv(self.api_key_env)
-        if not value:
-            raise ConfigError(
-                f"Set the {self.api_key_env} environment variable before starting the Agent."
-            )
-        return value
 
 
 def load_settings(
@@ -72,6 +60,9 @@ def load_settings(
     model = model_override or provider_config.get("model", "")
     if not isinstance(model, str) or not model.strip():
         raise ConfigError(f"Set providers.{provider}.model in {path} or use --model.")
+    api_key = provider_config.get("api_key", "")
+    if not isinstance(api_key, str):
+        raise ConfigError(f"providers.{provider}.api_key must be a string.")
 
     retry = raw.get("retry", {})
     if not isinstance(retry, dict):
@@ -79,7 +70,7 @@ def load_settings(
     settings = ModelSettings(
         provider=provider,
         model=model.strip(),
-        api_key_env=str(provider_config.get("api_key_env", "")),
+        api_key=api_key,
         base_url=provider_config.get("base_url") or None,
         request_timeout_seconds=float(raw.get("request_timeout_seconds", 300)),
         max_retries=int(retry.get("max_retries", 3)),
@@ -98,10 +89,8 @@ def load_settings(
         raise ConfigError("max_output_tokens must be positive.")
     if provider == "openai_compatible" and not settings.base_url:
         raise ConfigError("providers.openai_compatible.base_url is required.")
-    if settings.api_key_env:
-        settings.api_key
-    elif provider != "openai_compatible":
-        raise ConfigError(f"providers.{provider}.api_key_env is required.")
+    if not settings.api_key.strip() and provider != "openai_compatible":
+        raise ConfigError(f"providers.{provider}.api_key is required.")
     return settings
 
 

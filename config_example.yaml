@@ -4,15 +4,15 @@ providers:
   openai_compatible:
     model: ""
     base_url: ""
-    api_key_env: OPENAI_API_KEY
+    api_key: ""
     stream_include_usage: false
   openai_responses:
     model: ""
     base_url: ""
-    api_key_env: OPENAI_API_KEY
+    api_key: ""
   anthropic_messages:
     model: ""
-    api_key_env: ANTHROPIC_API_KEY
+    api_key: ""
 
 request_timeout_seconds: 300
 max_output_tokens: 4096

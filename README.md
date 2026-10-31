@@ -10,7 +10,7 @@ Use Python 3.10 or newer:
 python -m pip install -r requirements.txt
 ```
 
-Set the API key for the configured provider in the process environment. The key is not stored in config.yaml or passed to Bash tools.
+Set api_key directly under the configured provider in config.yaml. No API key environment variable is needed. OpenAI-compatible endpoints that do not require authentication can leave api_key empty.
 
 Copy config_example.yaml to config.yaml, then set a model under the provider you will use. config.yaml is ignored by Git. For an OpenAI Responses model, set providers.openai_responses.model. For an OpenAI-compatible endpoint, also set providers.openai_compatible.base_url. For Anthropic Messages, set providers.anthropic_messages.model.
 
